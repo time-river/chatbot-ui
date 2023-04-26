@@ -1,0 +1,23 @@
+{
+    "Sign Up": "注册",
+    "Username": "用户名",
+    "The length shouldn't be lower than 4 characters": "长度低于4个字符",
+    "Email Address": "邮箱地址",
+    "Please input valid email address": "请输入有效的邮箱地址",
+    "Password": "密码",
+    "Then length shouldn't be lower than 6 characters": "长度低于6个字符",
+    "Reentered Password": "再次输入密码",
+    "Passwords do not match": "密码不一致",
+    "Invitation Code (Optional)": "邀请码(可选)",
+    "Verify": "验证",
+    "Reverify": "再次验证",
+    "Verification Code": "验证码",
+    "Sent successfully, please check your email": "发送成功，请查收邮件",
+    "Register successfully, please sign in": "注册成功，请登录",
+    "Already have an account? Sign in": "已有帐号？登录",
+    "Sign In": "登录",
+    "Login successfully": "登录成功",
+    "Don't have an account? Sign Up": "没有帐号？注册",
+    "Remember me": "记住我",
+    "Forgot password?": "忘记密码？"
+}
