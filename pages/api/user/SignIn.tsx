@@ -17,6 +17,7 @@ import {
   Grid,
   Link,
   Snackbar,
+  SnackbarCloseReason,
   TextField,
   Typography
 } from '@mui/material';
@@ -29,15 +30,16 @@ import Alert from '@/components/User/Alert';
 import globalCfg from "@/global.config";
 
 const theme = createTheme();
-const captchaRef = React.createRef();
+const captchaRef = React.createRef<ReCAPTCHA>();
 
 export default function SignIn() {
   const router = useRouter()
   const { t } = useTranslation('user')
 
+  const [logined, setLogined] = React.useState(false)
   const [open, setOpen] = React.useState(false)
   const [tipStatus, setTipStatus] = React.useState(false)
-  const [tipText, setTipText] = React.useState("")
+  const [tipText, setTipText] = React.useState<string | null>("")
 
   const SITE_KEY = globalCfg.recaptchaKey;
   const TIPES_TIME = 5000
@@ -45,7 +47,7 @@ export default function SignIn() {
   var alertType: AlertColor = "success"
   var reqBody = {}
 
-  const handleTipClose = (event, reason) => {
+  const handleTipClose = (event: Event | React.SyntheticEvent<any, Event>, reason: SnackbarCloseReason) => {
     if (reason === 'clickaway') {
       return
     }
@@ -53,7 +55,8 @@ export default function SignIn() {
     setTipStatus(false)
   }
 
-  const requestSignIn = async (value: string) => {
+  const requestSignIn = async (value: string | null) => {
+    setLogined(true)
     console.log(value)
 
     setTimeout(()=>{
@@ -61,21 +64,29 @@ export default function SignIn() {
       setOpen(false)
       setTipStatus(true)
 
-      router.push("/")
+      router.replace("/")
       // force refresh page to avoid empty recaptcha element
       router.reload()
     }, 1000)
   }
 
+  // speed up home page loading
+  React.useEffect(() => {
+    router.prefetch('/')
+  }, [router])
+
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get('email'),
-      password: data.get('password'),
-    });
 
-    captchaRef.current.reset()
+    const data = new FormData(event.currentTarget);
+    const username = data.get('username')
+    const passwd = data.get('password')
+
+    if (username === "" || passwd === "") {
+      return
+    }
+
+    captchaRef.current?.reset()
     setOpen(true)
   };
 
@@ -107,7 +118,7 @@ export default function SignIn() {
           <Typography component="h1" variant="h5">
             {t("Sign In")}
           </Typography>
-          <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
+          <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1 }}>
             <TextField
               margin="normal"
               required
@@ -149,6 +160,7 @@ export default function SignIn() {
               fullWidth
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
+              disabled={logined}
             >
               {t("Sign In")}
             </Button>

@@ -16,6 +16,7 @@ import {
   Grid,
   Link,
   Snackbar,
+  SnackbarCloseReason,
   TextField,
   Typography
 } from '@mui/material';
@@ -28,7 +29,7 @@ import globalCfg from "@/global.config";
 import api from "./api"
 
 const theme = createTheme();
-const captchaRef = React.createRef();
+const captchaRef = React.createRef<ReCAPTCHA>();
 
 export default function SignUp() {
   const router = useRouter()
@@ -42,15 +43,15 @@ export default function SignUp() {
   const [tipStatus, setTipStatus] = React.useState(false)
 
   const [usernameText, setUsernameText] = React.useState("")
-  const [usernameHelperText, setUsernameHelperText] = React.useState("")
+  const [usernameHelperText, setUsernameHelperText] = React.useState<string | null>("")
   const [emailText, setEmailText] = React.useState("")
-  const [emailHelperText, setEmailHelperText] = React.useState("")
+  const [emailHelperText, setEmailHelperText] = React.useState<string | null>("")
   const [passwdText, setPasswdText] = React.useState("")
-  const [passwdHelperText, setPasswdHelperText] = React.useState("")
+  const [passwdHelperText, setPasswdHelperText] = React.useState<string | null>("")
   const [reenteredPasswdText, setReenteredPasswdText] = React.useState("")
   const [reenteredPasswdError, setReenteredPasswdError] = React.useState(false)
-  const [reenteredPasswdHelperText, setReenteredPasswdHelperText] = React.useState("")
-  const [tipText, setTipText] = React.useState("")
+  const [reenteredPasswdHelperText, setReenteredPasswdHelperText] = React.useState<string | null>("")
+  const [tipText, setTipText] = React.useState<string | null>("")
 
   const usenamePattern = globalCfg.user.usenamePattern
   const emailPattern = globalCfg.user.emailPattern
@@ -83,12 +84,12 @@ export default function SignUp() {
     }
 
     // reset captcah every challenge
-    captchaRef.current.reset()
+    captchaRef.current?.reset()
     setOpen(true)
     setCanSend(false)
   }
 
-  const handleTipClose = (event, reason) => {
+  const handleTipClose = (event: Event | React.SyntheticEvent<any, Event>, reason: SnackbarCloseReason) => {
     if (reason === 'clickaway') {
       return
     }
@@ -96,7 +97,7 @@ export default function SignUp() {
     setTipStatus(false)
   }
 
-  const handleRequestCode = async (value: string) => {
+  const handleRequestCode = async (value: string | null) => {
     console.log(value)
     const reqBody = {
       username: usernameText,
@@ -104,7 +105,7 @@ export default function SignUp() {
       code: value,
     }
 
-    api.requestCode(reqBody)
+    //api.requestCode(reqBody)
 
     // TODO
     if (true) {
@@ -118,9 +119,10 @@ export default function SignUp() {
     }
   }
 
-  const usernameOnChange = (event: Object) => {
+  const usernameOnChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const pattern = new RegExp(usenamePattern)
-    const data = event.target.value
+    const target = event.target as HTMLInputElement
+    const data = target.value
 
     if (pattern.test(data)) {
       setUsernameHelperText("")
@@ -131,9 +133,10 @@ export default function SignUp() {
     }
   }
 
-  const emailOnChange = (event: Object) => {
+  const emailOnChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const pattern = new RegExp(emailPattern)
-    const data = event.target.value
+    const target = event.target as HTMLInputElement
+    const data = target.value
 
     if (pattern.test(data)) {
       setEmailHelperText("")
@@ -144,9 +147,10 @@ export default function SignUp() {
     }
   }
 
-  const passwdOnChange = (event: Object) => {
+  const passwdOnChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const pattern = new RegExp(passwdPattern)
-    const data = event.target.value
+    const target = event.target as HTMLInputElement
+    const data = target.value
 
     if (pattern.test(data)) {
       setPasswdHelperText("")
@@ -166,8 +170,9 @@ export default function SignUp() {
     }
   }
 
-  const reenteredPasswdOnChange = (event: Object) => {
-    const data = event.target.value
+  const reenteredPasswdOnChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const target = event.target as HTMLInputElement
+    const data = target.value
 
     if (passwdText !== data) {
       setReenteredPasswdText(data)
@@ -206,7 +211,7 @@ export default function SignUp() {
 
       // TODO: switch page
       setTimeout(()=>{
-        router.push("/signin")
+        router.replace("/signin")
         // force refresh page to avoid empty recaptcha element
         router.reload()
       }, 3000)

@@ -8,7 +8,7 @@ interface Message {
     data: any
 }
 
-const requestCode = async (body: any): any => {
+const requestCode = async (body: Object): Promise<void> => {
     await axios.post(requestCodeUrl, body)
         .then(function (response) {
             //console.log(response)
@@ -19,15 +19,8 @@ const requestCode = async (body: any): any => {
         })
 }
 
-const register = async (req: Request): Promise<Response> => {
-    try {
-      const response = await fetch(registerUrl);
-  
-      return new Response(JSON.stringify(models), { status: 200 });
-    } catch (error) {
-      console.error(error);
-      return new Response('Error', { status: 500 });
-    }
+const register = async (req: Request) => {
+
 };
 
-export default {requestCode, register}
+export default requestCode
